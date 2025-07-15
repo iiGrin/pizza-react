@@ -17,12 +17,11 @@ export const Home = ({ searchValue }) => {
 
   useEffect(() => {
     getPizzas()
-    getPages()
-
   }, [searchValue, currentPage])
 
   const renderPizzas = pizzas.map(pizza => <PizzaBlock key={pizza.id} {...pizza} />)
   const skeleton = [...Array(8)].map((_, index) => <Skeleton key={index} />)
+
 
   const getPizzas = async () => {
     setIsLoading(true)
