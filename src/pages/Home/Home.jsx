@@ -6,9 +6,17 @@ import { PizzaBlock } from '../../components/PizzaCard/PizzaCard'
 import { Skeleton } from '../../components/Skeleton/Skeleton'
 import { Pagination } from '../../components/Pagination/Pagination'
 
+const BASE_URL = 'https://686d082714219674dcca2427.mockapi.io/pizzas?'
+
 export const Home = ({ searchValue }) => {
   const [pizzas, setPizzas] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [activeCategory, setActiveCategory] = useState(3)
+  const [activeSortType, setActiveSortType] = useState({ name: 'популярности', value: 'rating' })
+  const [sortOrder, setSortOrder] = useState('desc')
+
+  const category = activeCategory > 0 ? `category=${activeCategory}` : ''
+
 
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, _] = useState(8)
@@ -17,7 +25,13 @@ export const Home = ({ searchValue }) => {
 
   useEffect(() => {
     getPizzas()
-  }, [searchValue, currentPage])
+  }, [
+    activeCategory, 
+    activeSortType, 
+    sortOrder, 
+    searchValue,
+    currentPage
+  ])
 
   const renderPizzas = pizzas.map(pizza => <PizzaBlock key={pizza.id} {...pizza} />)
   const skeleton = [...Array(8)].map((_, index) => <Skeleton key={index} />)
@@ -26,14 +40,15 @@ export const Home = ({ searchValue }) => {
   const getPizzas = async () => {
     setIsLoading(true)
     try {
-      let url = `https://686d082714219674dcca2427.mockapi.io/pizzas?`
+
+      let requestUrl = `${BASE_URL}`
 
       if (searchValue) {
-        url += `search=${searchValue}`
+        requestUrl += `search=${searchValue}`
       } else {
-        url += `limit=${itemsPerPage}&page=${currentPage}`
+        requestUrl += `limit=${itemsPerPage}&page=${currentPage}&${category}&sortBy=${activeSortType.value}&order=${sortOrder}`
       }
-      const request = await fetch(url)
+      const request = await fetch(requestUrl)
       const data = await request.json()
       setPizzas(Array.isArray(data) ? data : [])
       setIsLoading(false)
@@ -61,19 +76,20 @@ export const Home = ({ searchValue }) => {
     }
   }
 
+  const handleToggleOrder = () => {
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+  }
+
   const handlePageChange = (page) => {
     setIsLoading(true)
     setCurrentPage(page)
   }
 
-  console.log('render')
-
-
   return (
     <div className="container">
       <div className="content__top">
-        <Categories />
-        <Sort />
+        <Categories categoryId={activeCategory} onClickCategory={(id) => setActiveCategory(id)} />
+        <Sort sort={activeSortType} order={sortOrder} onChangeSort={(id) => setActiveSortType(id)} onChangeOrder={handleToggleOrder} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">
