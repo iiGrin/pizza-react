@@ -11,6 +11,7 @@ export const Home = () => {
 
   useEffect(() => {
     getPizzas()
+    window.scrollTo(0, 0)
   }, [])
 
   const getPizzas = async () => {
@@ -27,7 +28,7 @@ export const Home = () => {
     }
   }
   return (
-    <>
+    <div className="container">
       <div className="content__top">
         <Categories />
         <Sort />
@@ -36,6 +37,6 @@ export const Home = () => {
       <div className="content__items">
         {isLoading ? [...Array(8)].map((_, index) => <Skeleton key={index} />) : pizzas.map(pizza => <PizzaBlock key={pizza.id} {...pizza} />)}
       </div>
-    </>
+    </div>
   )
 }
