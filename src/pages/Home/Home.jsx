@@ -1,115 +1,109 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import qs from 'qs'
 
+import { setCategoryId, setPageCount, setCurrentPage } from '../../store/slices/filtersSlice'
 import { Categories } from '../../components/Categories/Categories'
 import { Sort } from '../../components/Sort/Sort'
-import { PizzaBlock } from '../../components/PizzaCard/PizzaCard'
+import { PizzaCard } from '../../components/PizzaCard/PizzaCard'
 import { Skeleton } from '../../components/Skeleton/Skeleton'
 import { Pagination } from '../../components/Pagination/Pagination'
+import { useNavigate } from 'react-router-dom'
+import { useGetPizzasQuery } from '../../store/slices/pizzasApi'
+import { ITEMS_PER_PAGE } from '../../constants/apiConstants'
 
-const BASE_URL = 'https://686d082714219674dcca2427.mockapi.io/pizzas?'
+export const Home = () => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const isMounted = useRef(false)
 
-export const Home = ({ searchValue }) => {
-  const [pizzas, setPizzas] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [activeCategory, setActiveCategory] = useState(3)
-  const [activeSortType, setActiveSortType] = useState({ name: 'популярности', value: 'rating' })
-  const [sortOrder, setSortOrder] = useState('desc')
+  const { categoryId: category, sort, currentPage, searchValue } = useSelector(state => state.filters)
+  const sortBy = sort.value
+  console.log(category)
 
-  const category = activeCategory > 0 ? `category=${activeCategory}` : ''
+  const [order, setOrder] = useState('desc')
 
+  const { data: pizzasData, isLoading, isError, isFetching } = useGetPizzasQuery(
+    {
+      category: category || 0,
+      sortBy,
+      order,
+      searchValue,
+      page: currentPage || 1,
+    });
 
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, _] = useState(8)
-  const [pageCount, setPageCount] = useState(0)
-
+  const pizzas = pizzasData?.items || [];
+  const totalItems = pizzasData?.totalItems || 0
+  const pageCount = totalItems > 0 ? Math.ceil(totalItems / ITEMS_PER_PAGE) : 0
 
   useEffect(() => {
-    getPizzas()
-  }, [
-    activeCategory, 
-    activeSortType, 
-    sortOrder, 
-    searchValue,
-    currentPage
-  ])
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortBy,
+        category,
+        page: currentPage,
+        order
+      })
+      navigate(`?${queryString}`)
+    }
+    isMounted.current = true
+  }, [category, sortBy, order, currentPage, navigate])
 
-  const renderPizzas = pizzas.map(pizza => <PizzaBlock key={pizza.id} {...pizza} />)
+  useEffect(() => {
+    if (totalItems !== null && totalItems >= 0) {
+      const calculatedPageCount = Math.ceil(totalItems / ITEMS_PER_PAGE);
+      dispatch(setPageCount(calculatedPageCount));
+    }
+  }, [totalItems, dispatch]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentPage]);
+
+  const renderPizzas = pizzas.map(pizza => <PizzaCard key={pizza.id} {...pizza} />)
   const skeleton = [...Array(8)].map((_, index) => <Skeleton key={index} />)
 
-
-  const getPizzas = async () => {
-    setIsLoading(true)
-    try {
-
-      let requestUrl = `${BASE_URL}`
-
-      if (searchValue) {
-        requestUrl += `search=${searchValue}`
-      } else {
-        requestUrl += `limit=${itemsPerPage}&page=${currentPage}&${category}&sortBy=${activeSortType.value}&order=${sortOrder}`
-      }
-      const request = await fetch(requestUrl)
-      const data = await request.json()
-      setPizzas(Array.isArray(data) ? data : [])
-      setIsLoading(false)
-      window.scrollTo(0, 0)
-    } catch (error) {
-      console.error("Failed to fetch pizzas:", error)
-      setPizzas([])
-      setIsLoading(false)
-    }
-  }
-
-  const getPages = async () => {
-    try {
-      const request = await fetch('https://686d082714219674dcca2427.mockapi.io/pizzas')
-      const totalItems = await request.json()
-      if (searchValue.length > 1) {
-        setPageCount(Math.ceil(renderPizzas.length / itemsPerPage))
-      } else {
-        setPageCount(Math.ceil(totalItems.length / itemsPerPage))
-      }
-
-    } catch (error) {
-      console.error("Failed to fetch total pages:", error)
-      setPageCount(1)
-    }
-  }
-
   const handleToggleOrder = () => {
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+    setOrder(order === 'asc' ? 'desc' : 'asc')
   }
 
   const handlePageChange = (page) => {
-    setIsLoading(true)
-    setCurrentPage(page)
+    dispatch(setCurrentPage(page))
+  }
+
+  const handleChangeCategory = (id) => {
+    dispatch(setCategoryId(id))
+    dispatch(setCurrentPage(1))
+  }
+  console.log(isLoading, isFetching);
+  let content;
+
+  if (isLoading || isFetching) {
+    content = skeleton;
+  } else if (isError) {
+    content = <div>Произошла ошибка</div>;
+  } else {
+    content = renderPizzas.length > 0 ? renderPizzas : <div>Пиццы не найдены</div>;
   }
 
   return (
     <div className="container">
       <div className="content__top">
-        <Categories categoryId={activeCategory} onClickCategory={(id) => setActiveCategory(id)} />
-        <Sort sort={activeSortType} order={sortOrder} onChangeSort={(id) => setActiveSortType(id)} onChangeOrder={handleToggleOrder} />
+        <Categories categoryId={category} onClickCategory={handleChangeCategory} />
+        <Sort onChangeOrder={handleToggleOrder} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">
-        {isLoading ? (
-          skeleton
-        ) : renderPizzas.length === 0 ? (
-          <div>
-            К сожалению, пиццы по вашему запросу не найдены.
-          </div>
-        ) : (
-          renderPizzas
-        )}
+        {content}
       </div>
       {!isLoading && pizzas.length > 0 && (
         <Pagination
-          onPageChange={page => handlePageChange(page)}
+          onPageChange={handlePageChange}
           pageCount={pageCount}
           currentPage={currentPage}
           prevButtonLabel={'<'}
           nextButtonLabel={'>'}
+          isLoading
         />
       )}
     </div>
