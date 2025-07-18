@@ -1,14 +1,6 @@
-import { useState } from 'react'
-
 const CATEGORIES = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые']
 
-export const Categories = () => {
-  const [activeTab, setActiveTab] = useState(0)
-
-  const onClickCategory = (index) => {
-    setActiveTab(index)
-  }
-
+export const Categories = ({ categoryId, onClickCategory }) => {
   return (
     <div className="categories">
       <ul>
@@ -16,7 +8,7 @@ export const Categories = () => {
           <li
             key={index}
             onClick={() => onClickCategory(index)}
-            className={activeTab === index ? 'active' : ''}
+            className={categoryId === index ? 'active' : ''}
           >
             {category}
           </li>

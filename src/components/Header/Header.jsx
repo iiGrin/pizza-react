@@ -1,20 +1,37 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Search } from '../Search/Search'
+import { useDispatch, useSelector } from 'react-redux'
+import { setCategoryId, setCurrentPage } from '../../store/slices/filtersSlice'
 
 export const Header = () => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const location = useLocation()
+  const { pizzasCart, totalPriceCart } = useSelector(state => state.cart)
+  const totalCount = pizzasCart.reduce((sum, item) => sum + item.count, 0);
+
+  const handleLogoClick = () => {
+    navigate('/')
+    dispatch(setCurrentPage(1))
+    dispatch(setCategoryId(0))
+  }
+
   return (
     <div className="header">
       <div className="container">
-        <Link to="/">
-          <div className="header__logo">
+        <div>
+          <div onClick={handleLogoClick} className="header__logo">
             <img width="38" src="pizza-logo.svg" alt="Pizza logo" />
             <div>
               <h1>React Pizza</h1>
               <p>самая вкусная пицца во вселенной</p>
             </div>
-          </div></Link>
+          </div>
+        </div>
+        <Search />
         <div className="header__cart">
-          <Link to="/cart" className="button button--cart">
-            <span>520 ₽</span>
+          {location.pathname !== '/cart' && <Link to="/cart" className="button button--cart">
+            <span>{totalPriceCart}</span>
             <div className="button__delimiter"></div>
             <svg
               width="18"
@@ -45,8 +62,8 @@ export const Header = () => {
                 strokeLinejoin="round"
               />
             </svg>
-            <span>3</span>
-          </Link>
+            <span>{totalCount}</span>
+          </Link>}
         </div>
       </div>
     </div>
