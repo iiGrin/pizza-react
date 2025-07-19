@@ -1,6 +1,11 @@
-const CATEGORIES = ['Все', 'Мясные', 'Вегетарианская', 'Гриль', 'Острые', 'Закрытые']
+import { CATEGORIES } from '../../constants/filtersConstants';
 
-export const Categories = ({ categoryId, onClickCategory }) => {
+interface IProps {
+  categoryId: number;
+  onClickCategory: (index: number) => void;
+}
+
+export const Categories = ({ categoryId, onClickCategory }: IProps) => {
   return (
     <div className="categories">
       <ul>
@@ -15,5 +20,5 @@ export const Categories = ({ categoryId, onClickCategory }) => {
         ))}
       </ul>
     </div>
-  )
-}
+  );
+};

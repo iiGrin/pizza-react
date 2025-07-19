@@ -2,7 +2,7 @@
 
 .sort {
   position: relative;
-  &__label {
+  .sortLabel {
     display: flex;
     align-items: center;
 
@@ -21,7 +21,17 @@
     }
   }
 
-  &__popup {
+  .orderBtn {
+    width: 24px;
+    height: 24px;
+    border: 0px;
+
+    svg {
+      margin-right: 0px;
+    }
+  }
+
+  .sortPopup {
     position: absolute;
     right: 0;
     margin-top: 15px;

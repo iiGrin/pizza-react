@@ -1,4 +1,4 @@
-import styles from './NotFoundBlock.module.scss'
+import styles from './NotFoundBlock.module.scss';
 
 export const NotFoundBlock = () => {
   return (
@@ -12,5 +12,5 @@ export const NotFoundBlock = () => {
         К сожалению данная страница отсутствует в нашем интернет-магазине
       </p>
     </div>
-  )
-}
+  );
+};
