@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { setSort } from '../../store/slices/filtersSlice';
+import { setSort } from '../../store/filters/slice';
 import { SORT_FILTERS } from '../../constants/filtersConstants';
 import styles from './Sort.module.scss';
-import { TOrder, TSortOptions } from '@/types/apiTypes';
+import { ISortOptions, TOrder, TSortProperty } from '@/types/apiTypes';
+import { filtersSelector } from '../../store/filters/selectors';
 
 interface IProps {
   onChangeOrder: () => void;
@@ -14,12 +15,12 @@ interface IProps {
 export const Sort = ({ onChangeOrder, order }: IProps) => {
   const sortRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const sort = useSelector((state) => state.filters.sort);
+  const { sort } = useSelector(filtersSelector);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (!e.composedPath().includes(sortRef.current)) {
+      if (sortRef.current && !e.composedPath().includes(sortRef.current)) {
         setOpen(false);
       }
     };
@@ -32,7 +33,7 @@ export const Sort = ({ onChangeOrder, order }: IProps) => {
     setOpen(!open);
   };
 
-  const handleSelectSort = (sortOption: TSortOptions) => {
+  const handleSelectSort = (sortOption: ISortOptions) => {
     dispatch(setSort(sortOption));
     setOpen(false);
   };
@@ -42,9 +43,14 @@ export const Sort = ({ onChangeOrder, order }: IProps) => {
       <div className={styles.sortLabel}>
         <button className={styles.orderBtn} onClick={onChangeOrder}>
           <ArrowDropDownIcon
-            sx={{
-              transform: order === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)',
-            }}
+            sx={
+              order === 'asc'
+                ? {
+                    transform: 'rotate(180deg)',
+                    transition: 'all 0.3s ease-in-out',
+                  }
+                : { transform: 'rotate(0)', transition: 'all 0.3s ease-in-out' }
+            }
           />
         </button>
         <b>Сортировка по:</b>
@@ -56,9 +62,7 @@ export const Sort = ({ onChangeOrder, order }: IProps) => {
             {SORT_FILTERS.map((sortOption, index) => (
               <li
                 key={index}
-                className={
-                  sort.sortProperty === sortOption.sortProperty ? 'active' : ''
-                }
+                className={sort.sortProperty === sortOption.sortProperty ? 'active' : ''}
                 onClick={() => handleSelectSort(sortOption)}
               >
                 {sortOption.name}

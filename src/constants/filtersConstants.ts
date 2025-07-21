@@ -1,10 +1,10 @@
-import { TSortOptions } from '../types/apiTypes';
+import { ISortOptions } from '../types/apiTypes';
 
-export const SORT_FILTERS: TSortOptions[] = [
+export const SORT_FILTERS: ISortOptions[] = [
   { name: 'популярности', sortProperty: 'rating' },
   { name: 'цене', sortProperty: 'price' },
   { name: 'алфавиту', sortProperty: 'title' },
-];
+] as const;
 
 export const CATEGORIES = [
   'Все',

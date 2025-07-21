@@ -7,7 +7,7 @@ interface IProps {
 
 export const Categories = ({ categoryId, onClickCategory }: IProps) => {
   return (
-    <div className="categories">
+    <div className='categories'>
       <ul>
         {CATEGORIES.map((category, index) => (
           <li

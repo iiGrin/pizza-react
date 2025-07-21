@@ -4,7 +4,9 @@ export const NotFoundBlock = () => {
   return (
     <div className={styles.root}>
       <h1>
-        <span>😕</span>
+        <span role='img' aria-label='confused face emoji'>
+          😕
+        </span>
         <br />
         Ничего не найдено
       </h1>

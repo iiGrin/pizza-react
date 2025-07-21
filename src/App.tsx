@@ -9,11 +9,11 @@ import './styles/app.scss';
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/pizzas/:id" element={<DetailPizza />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="*" element={<NotFound />} />
+      <Route path='/' element={<MainLayout />}>
+        <Route path='/' element={<Home />} />
+        <Route path='/pizzas/:id' element={<DetailPizza />} />
+        <Route path='/cart' element={<Cart />} />
+        <Route path='*' element={<NotFound />} />
       </Route>
     </Routes>
   );
