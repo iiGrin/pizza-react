@@ -1,14 +1,28 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { BASE_URL, ITEMS_PER_PAGE } from '../../constants/apiConstants';
+import { IPizza, TOrder, TSortProperty } from '@/types/apiTypes';
+
+interface GetPizzasQueryParams {
+  category: number;
+  sortBy: TSortProperty;
+  order: TOrder;
+  searchValue: string;
+  page: number;
+}
+
+interface GetPizzasResponse {
+  items: IPizza[];
+  totalItems: number;
+}
 
 export const pizzasApi = createApi({
   reducerPath: 'pizzasApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL
+    baseUrl: BASE_URL,
   }),
   tagTypes: ['Pizzas'],
   endpoints: (builder) => ({
-    getPizzas: builder.query({
+    getPizzas: builder.query<GetPizzasResponse, GetPizzasQueryParams>({
       query: ({ category, sortBy, order, searchValue, page }) => {
         const params = {
           page,
@@ -17,32 +31,33 @@ export const pizzasApi = createApi({
           order,
           ...(category !== 0 && { category: category }),
           ...(searchValue && { search: searchValue }),
-        }
+        };
 
         return {
           url: '',
-          params
-        }
+          params,
+        };
       },
-      transformResponse: async (response, meta, arg) => {
-        const countParams = {
+      transformResponse: async (response: IPizza[], meta, arg) => {
+        const countParams: Record<string, string | number> = {
           sortBy: arg.sortBy,
           order: arg.order,
           ...(arg.category !== 0 && { category: arg.category }),
           ...(arg.searchValue && { search: arg.searchValue }),
-        }
+        };
 
-        const countResponse = await fetch(`${BASE_URL}?${new URLSearchParams(countParams).toString()}`)
-        const totalItemsData = await countResponse.json();
+        const queryParams = new URLSearchParams(countParams).toString();
+        const countResponse = await fetch(`${BASE_URL}?${queryParams}`);
+        const totalItemsData: IPizza[] = await countResponse.json();
         const totalItems = Array.isArray(totalItemsData) ? totalItemsData.length : 0;
 
         return {
           items: response,
           totalItems: totalItems,
         };
-      }
-    })
-  })
-})
+      },
+    }),
+  }),
+});
 
 export const { useGetPizzasQuery } = pizzasApi;

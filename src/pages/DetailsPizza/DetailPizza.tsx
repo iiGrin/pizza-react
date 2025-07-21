@@ -29,7 +29,7 @@ export const DetailPizza = () => {
   }
 
   return (
-    <div className="container">
+    <div className='container'>
       <img src={pizza.imageUrl} />
       <h2>{pizza.title}</h2>
       <h4>{pizza.price} ₽</h4>
