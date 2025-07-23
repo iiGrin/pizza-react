@@ -9,16 +9,10 @@
     align-items: center;
     justify-content: space-between;
 
-    @media (max-width: 645px) {
-      flex-direction: column;
 
-      .header__logo {
-        margin-bottom: 20px;
-      }
-    }
   }
 
-  &__logo {
+  .logo {
     display: flex;
 
     img {
@@ -36,5 +30,15 @@
     p {
       color: #7b7b7b;
     }
+  }
+}
+
+@media (max-width: 645px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .logo {
+    margin-bottom: 20px;
   }
 }

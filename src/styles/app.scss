@@ -36,15 +36,18 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(2, 1);
+    justify-items: center;
     grid-column-gap: 20px;
     grid-row-gap: 60px;
 
     @media (max-width: 1440px) {
       grid-template-columns: repeat(3, 1fr);
     }
+
     @media (max-width: 1100px) {
       grid-template-columns: repeat(2, 1fr);
     }
+
     @media (max-width: 760px) {
       grid-template-columns: repeat(1, 1fr);
     }
@@ -55,30 +58,8 @@ body {
     align-items: center;
     justify-content: space-between;
 
-    @media (max-width: 1290px) {
-      .categories {
-        width: 100%;
-        overflow: scroll;
-
-        ul {
-          width: 785px;
-        }
-      }
-
-      .sort {
-        padding-left: 20px;
-        b {
-          display: none;
-        }
-      }
-    }
-
     @media (max-width: 820px) {
       flex-direction: column;
-
-      .sort {
-        margin-top: 20px;
-      }
     }
   }
 }
@@ -90,6 +71,7 @@ body {
   &--cart {
     max-width: 820px;
     margin: 90px auto;
+
     .content__title {
       margin: 0;
     }
@@ -114,6 +96,7 @@ body {
       width: 30px;
       height: 30px;
       margin-right: 10px;
+
       path {
         stroke: $black;
         stroke-width: 1.9;
@@ -146,6 +129,7 @@ body {
           stroke: darken($color: #b6b6b6, $amount: 50);
         }
       }
+
       span {
         color: darken($color: #b6b6b6, $amount: 50);
       }
@@ -246,6 +230,7 @@ body {
           height: 11.5px;
           position: relative;
         }
+
         &:hover,
         &:active {
           border-color: darken($color: $gray-line, $amount: 80);
@@ -303,6 +288,7 @@ body {
 
         svg {
           margin-right: 12px;
+
           path {
             fill: transparent;
             stroke-width: 2;

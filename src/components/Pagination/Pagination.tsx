@@ -29,31 +29,42 @@ export const Pagination = ({
   };
 
   return (
-    <div className={styles.root}>
+    <nav className={styles.root} aria-label='Навигация по страницам'>
       <button
+        type='button'
         className={currentPage === 1 ? styles.selected : ''}
         disabled={currentPage === 1}
         onClick={handlePrev}
+        aria-label={prevButtonLabel}
       >
         {prevButtonLabel}
       </button>
-      {pagesButtons.map((page) => (
-        <button
-          className={page === currentPage ? styles.selected : ''}
-          disabled={page === currentPage}
-          key={page}
-          onClick={() => onPageChange(page)}
-        >
-          {page}
-        </button>
-      ))}
+      <ul>
+        {pagesButtons.map((page) => (
+          <li key={page}>
+            <button
+              type='button'
+              className={page === currentPage ? styles.selected : ''}
+              disabled={page === currentPage}
+              key={page}
+              onClick={() => onPageChange(page)}
+              aria-current={page === currentPage ? 'page' : undefined}
+              aria-label={`Страница ${page}`}
+            >
+              {page}
+            </button>
+          </li>
+        ))}
+      </ul>
       <button
+        type='button'
         className={currentPage === pageCount ? styles.selected : ''}
         disabled={currentPage === pageCount}
         onClick={handleNext}
+        aria-label={nextButtonLabel}
       >
         {nextButtonLabel}
       </button>
-    </div>
+    </nav>
   );
 };

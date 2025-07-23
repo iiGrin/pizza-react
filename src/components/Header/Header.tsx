@@ -5,9 +5,9 @@ import { setCategoryId, setCurrentPage } from '../../store/filters/slice';
 import logo from '../../assets/img/pizza-logo.svg';
 import { cartSelector } from '../../store/cart/selectors';
 import { calculateTotalCount } from '../../utils/cartUtils';
+import styles from './Header.module.scss';
 
 export const Header = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
   const { pizzasCart, totalPriceCart } = useSelector(cartSelector);
@@ -15,22 +15,26 @@ export const Header = () => {
   const totalCount = calculateTotalCount(pizzasCart);
 
   const handleLogoClick = () => {
-    navigate('/');
     dispatch(setCurrentPage(1));
     dispatch(setCategoryId(0));
   };
 
   return (
-    <div className='header'>
-      <div className='container'>
+    <header className={styles.header}>
+      <div className={styles.container}>
         <div>
-          <div onClick={handleLogoClick} className='header__logo'>
-            <img width='38' src={`${logo}`} alt='Pizza logo' />
+          <Link
+            to='/'
+            onClick={handleLogoClick}
+            className={styles.logo}
+            aria-label='Перейти на главную страницу'
+          >
+            <img width='38' src={`${logo}`} alt='Логотип пиццерии' />
             <div>
               <h1>React Pizza</h1>
               <p>самая вкусная пицца во вселенной</p>
             </div>
-          </div>
+          </Link>
         </div>
         <Search />
         <div className='header__cart'>
@@ -44,6 +48,8 @@ export const Header = () => {
                 viewBox='0 0 18 18'
                 fill='none'
                 xmlns='http://www.w3.org/2000/svg'
+                aria-hidden='true'
+                focusable='false'
               >
                 <path
                   d='M6.33333 16.3333C7.06971 16.3333 7.66667 15.7364 7.66667 15C7.66667 14.2636 7.06971 13.6667 6.33333 13.6667C5.59695 13.6667 5 14.2636 5 15C5 15.7364 5.59695 16.3333 6.33333 16.3333Z'
@@ -67,11 +73,11 @@ export const Header = () => {
                   strokeLinejoin='round'
                 />
               </svg>
-              <span>{totalCount}</span>
+              <span aria-hidden='true'>{totalCount}</span>
             </Link>
           )}
         </div>
       </div>
-    </div>
+    </header>
   );
 };

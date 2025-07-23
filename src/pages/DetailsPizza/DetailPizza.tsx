@@ -1,31 +1,18 @@
-import { IPizza } from '@/types/apiTypes';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useGetPizzaByIdQuery } from '../../store/pizzas/pizzasApi';
 import { useParams, useNavigate } from 'react-router-dom';
 
-export const DetailPizza = () => {
-  const [pizza, setPizza] = useState<IPizza | null>(null);
+const DetailPizza = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function fetchPizza() {
-      try {
-        const { data } = await axios.get(
-          'https://686d082714219674dcca2427.mockapi.io/pizzas/' + id
-        );
-        setPizza(data);
-      } catch (error) {
-        alert('Ошибка при получении пиццы!');
-        navigate('/');
-      }
-    }
+  const { data: pizza, isError, isLoading } = useGetPizzaByIdQuery(id || '');
 
-    fetchPizza();
-  }, []);
-
-  if (!pizza) {
+  if (isLoading) {
     return <div>Загрузка...</div>;
+  }
+
+  if (!pizza || isError) {
+    return <div>Произошла ошибка</div>;
   }
 
   return (
@@ -36,3 +23,5 @@ export const DetailPizza = () => {
     </div>
   );
 };
+
+export default DetailPizza;

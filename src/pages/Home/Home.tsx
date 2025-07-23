@@ -2,12 +2,18 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import qs from 'qs';
 
-import { setCategoryId, setPageCount, setCurrentPage } from '../../store/filters/slice';
-import { Categories } from '../../components/Categories/Categories';
-import { Sort } from '../../components/Sort/Sort';
-import { PizzaCard } from '../../components/PizzaCard/PizzaCard';
-import { Skeleton } from '../../components/Skeleton/Skeleton';
-import { Pagination } from '../../components/Pagination/Pagination';
+import {
+  setCategoryId,
+  setPageCount,
+  setCurrentPage,
+} from '../../store/filters/slice';
+import {
+  Categories,
+  Sort,
+  PizzaCard,
+  Skeleton,
+  Pagination,
+} from '../../components';
 import { useNavigate } from 'react-router-dom';
 import { useGetPizzasQuery } from '../../store/pizzas/pizzasApi';
 import { ITEMS_PER_PAGE } from '../../constants/apiConstants';
@@ -19,7 +25,12 @@ export const Home = () => {
   const dispatch = useDispatch();
   const isMounted = useRef(false);
 
-  const { categoryId: category, sort, currentPage, searchValue } = useSelector(filtersSelector);
+  const {
+    categoryId: category,
+    sort,
+    currentPage,
+    searchValue,
+  } = useSelector(filtersSelector);
   const sortBy: TSortProperty = sort.sortProperty;
 
   const [order, setOrder] = useState<TOrder>('asc');
@@ -38,8 +49,14 @@ export const Home = () => {
     page: currentPage || 1,
   });
 
-  const pizzas: IPizza[] = useMemo(() => pizzasData?.items || [], [pizzasData?.items]);
-  const totalItems: number = useMemo(() => pizzasData?.totalItems || 0, [pizzasData?.totalItems]);
+  const pizzas: IPizza[] = useMemo(
+    () => pizzasData?.items || [],
+    [pizzasData?.items]
+  );
+  const totalItems: number = useMemo(
+    () => pizzasData?.totalItems || 0,
+    [pizzasData?.totalItems]
+  );
   const pageCount: number = useMemo(
     () => (totalItems > 0 ? Math.ceil(totalItems / ITEMS_PER_PAGE) : 0),
     [totalItems]
@@ -72,7 +89,9 @@ export const Home = () => {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
-  const renderPizzas = pizzas.map((pizza: IPizza) => <PizzaCard key={pizza.id} {...pizza} />);
+  const renderPizzas = pizzas.map((pizza: IPizza) => (
+    <PizzaCard key={pizza.id} {...pizza} />
+  ));
   const skeleton = [...Array(8)].map((_, index) => <Skeleton key={index} />);
 
   const handleToggleOrder = () => {
@@ -97,13 +116,17 @@ export const Home = () => {
   } else if (isError) {
     content = <div>Произошла ошибка</div>;
   } else {
-    content = renderPizzas.length > 0 ? renderPizzas : <div>Пиццы не найдены</div>;
+    content =
+      renderPizzas.length > 0 ? renderPizzas : <div>Пиццы не найдены</div>;
   }
 
   return (
-    <div className='content'>
+    <>
       <div className='content__top'>
-        <Categories categoryId={category} onClickCategory={handleChangeCategory} />
+        <Categories
+          categoryId={category}
+          onClickCategory={handleChangeCategory}
+        />
         <Sort onChangeOrder={handleToggleOrder} order={order} />
       </div>
       <h2 className='content__title'>Все пиццы</h2>
@@ -118,6 +141,6 @@ export const Home = () => {
           isLoading
         />
       )}
-    </div>
+    </>
   );
 };
