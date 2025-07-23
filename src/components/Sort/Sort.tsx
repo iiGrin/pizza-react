@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { setSort } from '../../store/filters/slice';
 import { SORT_FILTERS } from '../../constants/filtersConstants';
-import styles from './Sort.module.scss';
 import { ISortOptions, TOrder, TSortProperty } from '@/types/apiTypes';
 import { filtersSelector } from '../../store/filters/selectors';
+import styles from './Sort.module.scss';
 
 interface IProps {
   onChangeOrder: () => void;
