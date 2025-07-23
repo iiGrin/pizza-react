@@ -1,15 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { CartItem } from '../../components/CartItem/CartItem';
+import { CartItem, EmptyCart } from '../../components';
 import { clearPizzaCart } from '../../store/cart/slice';
-import { EmptyCart } from '../../components/EmptyCart/EmptyCart';
 import { ICartPizza } from '@/types/apiTypes';
 import { cartSelector } from '../../store/cart/selectors';
 
-export const Cart = () => {
+const Cart = () => {
   const dispatch = useDispatch();
 
-  const { pizzasCart, totalPriceCart, totalCountCart } = useSelector(cartSelector);
+  const { pizzasCart, totalPriceCart, totalCountCart } =
+    useSelector(cartSelector);
 
   const handleClearCart = () => {
     if (window.confirm('Вы действительно хотите очистить корзину?')) {
@@ -114,7 +114,10 @@ export const Cart = () => {
             </span>
           </div>
           <div className='cart__bottom-buttons'>
-            <Link to='/' className='button button--outline button--add go-back-btn'>
+            <Link
+              to='/'
+              className='button button--outline button--add go-back-btn'
+            >
               <svg
                 width='8'
                 height='14'
@@ -142,3 +145,5 @@ export const Cart = () => {
     </div>
   );
 };
+
+export default Cart;

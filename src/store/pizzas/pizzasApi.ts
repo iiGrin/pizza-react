@@ -49,7 +49,9 @@ export const pizzasApi = createApi({
         const queryParams = new URLSearchParams(countParams).toString();
         const countResponse = await fetch(`${BASE_URL}?${queryParams}`);
         const totalItemsData: IPizza[] = await countResponse.json();
-        const totalItems = Array.isArray(totalItemsData) ? totalItemsData.length : 0;
+        const totalItems = Array.isArray(totalItemsData)
+          ? totalItemsData.length
+          : 0;
 
         return {
           items: response,
@@ -57,7 +59,10 @@ export const pizzasApi = createApi({
         };
       },
     }),
+    getPizzaById: builder.query<IPizza, string>({
+      query: (id) => `/${id}`,
+    }),
   }),
 });
 
-export const { useGetPizzasQuery } = pizzasApi;
+export const { useGetPizzasQuery, useGetPizzaByIdQuery } = pizzasApi;

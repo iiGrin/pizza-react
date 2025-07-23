@@ -46,16 +46,19 @@ export const Search = () => {
             />
           </svg>
           <input
+            id='search-input'
             ref={inputRef}
             value={value}
             onChange={handleChangeInput}
             className={styles.input}
             placeholder='Найдите свою пиццу...'
+            type='search'
           />
           {value && (
             <svg
               onClick={handleClearInput}
               className={styles.closeIcon}
+              aria-label='Очистить поле поиска'
               aria-hidden='true'
               xmlns='http://www.w3.org/2000/svg'
               width='24'
